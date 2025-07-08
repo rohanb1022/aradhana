@@ -108,15 +108,14 @@ export async function logout(req, res) {
   }
 }
 
-
-export async function authCheck(req , res){
-    try {
-        res.status(200).json(req.user)
-    } catch (error) {
-        console.log(error.message);
-        if(error.name === "TypeError" && error.message.includes("Cannot read properties of null")){
-            return res.status(401).json({message : "Unauthorised"})
-        }
-        res.status(500).json({message : "Internal server error"})
+export async function authCheck(req, res) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
+    res.status(200).json(req.user);
+  } catch (error) {
+    console.error("authCheck error:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
 }

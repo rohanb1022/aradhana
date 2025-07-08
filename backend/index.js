@@ -6,10 +6,14 @@ import authRoutes from "./routes/auth.route.js";
 import blogRoutes from "./routes/blog.route.js";
 import userRoutes from "./routes/user.route.js";
 import commentRoutes from "./routes/comment.route.js";
+import cookieParser from "cookie-parser";
+
+
 
 dotenv.config();
 const app = express();
 
+app.use(cookieParser());
 app.use(
   cors({
     origin: "http://localhost:5173", // exact origin of frontend
