@@ -5,15 +5,15 @@ import { verifyToken } from "../middleware/auth.middleware.js";
 const router = express.Router();
 
 // GET /api/blogs -> get all blogs
-router.get("/", getAllBlogs);
+router.get("/getBlogs", getAllBlogs);
 
 // GET /api/blogs/:id -> get a specific blog by ID
 router.get("/:id", getBlogById);
 
 // POST /api/blogs -> create a new blog
-router.post("/", verifyToken , createBlog);
+router.post("/create", verifyToken , createBlog);
 
 // Delete /api/blogs/deleteBlog/:id -> delete a specific blog by ID
-router.delete("/:id", verifyToken , deleteBlog);
+router.delete("/delete/:id", verifyToken , deleteBlog);
 
 export default router;
