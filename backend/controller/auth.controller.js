@@ -4,10 +4,10 @@ import generateWebToken from "../lib/util.js";
 
 export const signup = async (req , res) => {
 
-    const {firstname, lastname , username , email , password} = req.body;
+    const {username , email , password} = req.body;
     try {
 
-        if(!firstname || !lastname || !username || !email || !password){
+        if(!username || !email || !password){
             return res.status(400).json({message : "All fields are mandatory for signup"})
         }
 
@@ -30,15 +30,13 @@ export const signup = async (req , res) => {
 
         // check if password is valid
         if(password.length < 5){
-            return res.status(400).json({message : "Please enter valid credentials"})
+            return res.status(400).json({message : "Password must be at least 6 characters long"})
         }
 
         const salt = await bcrypt.genSalt(10)  // basically encrypt the password 10 times 
         const hashedPassword = await bcrypt.hash(password , salt)
 
         const newUser = new User({
-            firstname,
-            lastname,
             username,
             email,
             password : hashedPassword
@@ -51,8 +49,6 @@ export const signup = async (req , res) => {
             return res.status(201).json({
                 token : token,
                 id : newUser._id,
-                firstname : firstname,
-                lastname : lastname,
                 username : username,
                 email : email
             })
@@ -95,14 +91,23 @@ export const signin = async (req , res) => {
     }
 }
 
-export async function logout(req , res) {
-    try {
-    res.cookie("blogging-jwt" , "" , {maxAge : 0});
-    res.status(200).json({message : "You are successfully logged out"})
-    }catch(error){
-        console.log(error.message , "Internal server error")
-    }
+export async function logout(req, res) {
+  try {
+    res.cookie("blogging-jwt", "", {
+  httpOnly: true,
+  sameSite: "lax",
+  secure: false, // must match above
+  path: "/",
+  maxAge: 0,
+});
+
+    res.status(200).json({ message: "You are successfully logged out" });
+  } catch (error) {
+    console.log("Logout error:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
 }
+
 
 export async function authCheck(req , res){
     try {

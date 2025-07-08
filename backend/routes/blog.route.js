@@ -16,4 +16,4 @@ router.post("/", verifyToken , createBlog);
 // Delete /api/blogs/deleteBlog/:id -> delete a specific blog by ID
 router.delete("/:id", verifyToken , deleteBlog);
 
-
+export default router;

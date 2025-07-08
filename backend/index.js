@@ -10,11 +10,15 @@ import commentRoutes from "./routes/comment.route.js";
 dotenv.config();
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // exact origin of frontend
+    credentials: true,               // allow cookies and auth headers
+  })
+);
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
-
 app.use("/api/blogs", blogRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/comments", commentRoutes);
