@@ -10,6 +10,8 @@ type AuthStore = {
 };
 
 const Navbar = () => {
+
+
   const { logout, authUser } = useAuthStore() as AuthStore;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -38,7 +40,7 @@ const Navbar = () => {
                   Profile
                 </Link>
                 <button onClick={logout} className="text-sm font-medium hover:text-red-500 flex items-center gap-1">
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-4 h-4"/>
                   Logout
                 </button>
               </>
