@@ -1,4 +1,5 @@
 import Blog from "../models/blog.model.js";
+import User from "../models/user.model.js";
 
 export const getAllBlogs = async (req, res) => {
     try {
@@ -27,6 +28,16 @@ export const createBlog = async (req, res) => {
     const owner = req.user._id;
 
     try {
+
+        if (!title || !content || !topics || !owner) {
+            return res.status(400).json({ message: "All fields are required" });
+        }
+
+        const user = await User.findById(owner);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
         const newBlog = new Blog({
             title,
             content,
@@ -35,6 +46,7 @@ export const createBlog = async (req, res) => {
         });
 
         await newBlog.save();
+        await User.findByIdAndUpdate(owner, { $push: { blogs: newBlog._id } });
         return res.status(201).json(newBlog);
     } catch (error) {
         return res.status(500).json({ message: "Internal server error" });
@@ -56,7 +68,10 @@ export const deleteBlog = async (req, res) => {
 
         await Blog.findByIdAndDelete(blogId);
         await User.findByIdAndUpdate(userId, { $pull: { blogs: blogId } });
-        return res.status(200).json({ message: "Blog deleted successfully" });
+        return res.status(200).json({ 
+            message: "Blog deleted successfully",
+            title : blog.title
+        });
     } catch (error) {
         console.log(error.message);
         return res.status(500).json({ message : "Internal server error"});
