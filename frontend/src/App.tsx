@@ -10,6 +10,7 @@ import CreatePost from './page/CreatePost.tsx'
 import Home from './page/Home.tsx'
 import LandingPage from './page/LandingPage.tsx'
 import ProfilePage from './page/ProfilePage.tsx'
+import PostDetails from './page/PostDetails.tsx'
 
 
 function App() {
@@ -37,6 +38,8 @@ function App() {
         <Route path='/profile' element={ authUser ? <ProfilePage/> : <Navigate to={"/login"} /> }/>
         {/* for creating post page */}
         <Route path='/create-post' element={ authUser ? <CreatePost/> : <Navigate to={"/login"} /> }/>
+        {/* for post detailed view page */}
+        <Route path='/detailedPost/:id' element={ <PostDetails/> }/>
       </Routes>
    </div>
   )

@@ -1,38 +1,65 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { create } from "zustand";
 import { axiosInstance } from "@/lib/axios";
 import toast from "react-hot-toast";
 
-interface BlogPost {
-  _id?: string; // Optional, as it may not be present when creating a new post
+interface postType {
+  _id?: string;
   title: string;
   content: string;
   topics: string[];
-  createdAt : string;
+  owner: {
+    username: string;
+    _id: string;
+  };
+  likes: string[];
+  comments: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface BlogStore {
-  posts: BlogPost[];
+  posts: postType[];
+  post: postType;
+  postLikes: number;
   isAddingPost: boolean;
   isDeletingPost: boolean;
-  isFetchingPosts : boolean;
-  addPost: (post: BlogPost) => Promise<void>;
-  removePost: (title: string) => void;
-  updatePost: (title: string, updatedPost: BlogPost) => void;
-  getAllBlogs: () => Promise<void>
+  isFetchingPosts: boolean;
+  isFetchingPost: boolean;
+  addPost: (post: postType) => Promise<void>;
+  removePost: (blogId: string) => void;
+  updatePost: (title: string, updatedPost: postType) => void;
+  getAllBlogs: () => Promise<void>;
+  getSinglePost: (blogId: string) => Promise<void>;
+  makeLike: (blogId: string) => Promise<void>;
 }
 
 export const useBlogStore = create<BlogStore>((set) => ({
   posts: [],
+  post: {
+    _id: "",
+    title: "",
+    content: "",
+    topics: [],
+    owner: {
+      username: "",
+      _id: "",
+    },
+    likes: [],
+    comments: [],
+    createdAt: "",
+    updatedAt: "",
+  },
+  postLikes: 0,
   isAddingPost: false,
   isDeletingPost: false,
   isFetchingPosts: false,
+  isFetchingPost: false,
 
-  getAllBlogs : async () => {
-    set({ isFetchingPosts : true});
+  getAllBlogs: async () => {
+    set({ isFetchingPosts: true });
     try {
       const response = await axiosInstance.get("/blogs/getBlogs");
-      set({posts : response.data})
+      set({ posts: response.data });
     } catch (error) {
       console.log(error);
       toast.error("Failed to fetch posts", {
@@ -41,13 +68,13 @@ export const useBlogStore = create<BlogStore>((set) => ({
           background: "#333",
           color: "#fff",
         },
-      })
-    }finally {
-      set({isFetchingPosts : false})
+      });
+    } finally {
+      set({ isFetchingPosts: false });
     }
   },
 
-  addPost: async (post: BlogPost) => {
+  addPost: async (post: postType) => {
     set({ isAddingPost: true });
     try {
       const response = await axiosInstance.post("/blogs/create", post);
@@ -75,40 +102,67 @@ export const useBlogStore = create<BlogStore>((set) => ({
     }
   },
 
-  removePost: async (blogId : string) => {
-    set({isDeletingPost : true});
+  removePost: async (blogId: string) => {
+    set({ isDeletingPost: true });
     try {
-        const response  = await axiosInstance.delete(`/blogs/delete/${blogId}`);
-        const blogTitle = response.data.title;
-        set((state) => ({
-            posts: state.posts.filter((post) => post.title !== blogTitle),
-        }));
-        toast.success("Post deleted successfully", {
-          style: {
-            borderRadius: "10px",
-            background: "#333",
-            color: "#fff",
-          },
-        });
+      const response = await axiosInstance.delete(`/blogs/delete/${blogId}`);
+      const blogTitle = response.data.title;
+      set((state) => ({
+        posts: state.posts.filter((post) => post.title !== blogTitle),
+      }));
+      toast.success("Post deleted successfully", {
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
     } catch (error) {
-        console.log(error)
-        toast.error("Failed to delete post", {
-          style: {
-            borderRadius: "10px",
-            background: "#333",
-            color: "#fff",
-          },
-        });
-    }finally{
-        set({isDeletingPost : false})
+      console.log(error);
+      toast.error("Failed to delete post", {
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
+    } finally {
+      set({ isDeletingPost: false });
     }
   },
 
-  updatePost: (title: string, updatedPost: BlogPost) => {
+  getSinglePost: async (blogId: string) => {
+    set({ isFetchingPost: true });
+    try {
+      const response = await axiosInstance.get(`/blogs/${blogId}`);
+      set({ post: response.data });
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to fetch post", {
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
+    }
+  },
+
+  updatePost: (title: string, updatedPost: postType) => {
     set((state) => ({
       posts: state.posts.map((post) =>
         post.title === title ? updatedPost : post
       ),
     }));
+  },
+
+  makeLike: async (blogId: string) => {
+    try {
+      const response = await axiosInstance.put(`/comments/${blogId}`);
+      set({ postLikes: response.data.likes });
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to like post")
+    }
   },
 }));

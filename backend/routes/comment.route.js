@@ -2,7 +2,8 @@ import express from "express";
 import {
   addComment,
   getCommentsByBlogId,
-  deleteComment
+  deleteComment,
+  likePost
 } from "../controller/comment.controller.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
 
@@ -16,5 +17,8 @@ router.get("/:id", getCommentsByBlogId);
 
 // DELETE /api/comments/:id -> delete a specific comment
 router.delete("/:commentId", verifyToken, deleteComment);
+
+// PUT /api/comments/:id -> like a specific blog
+router.put("/:id" , verifyToken , likePost)
 
 export default router;

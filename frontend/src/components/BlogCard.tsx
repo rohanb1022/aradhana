@@ -48,7 +48,13 @@ const BlogCard = ({ blog }: BlogCardProps) => {
               </Badge>
             ))}
           </div>
-            <Button variant="outline" className="w-full text-black bg-white hover:bg-gray-100" >View</Button>
+            <Button 
+              variant="outline" 
+              className="w-full text-black bg-white hover:bg-gray-100"
+              onClick={() => window.location.href = `/detailedPost/${blog._id}`} 
+            >
+              View
+            </Button>
         </CardContent>
 
         <CardFooter className="text-xs text-white/40">
