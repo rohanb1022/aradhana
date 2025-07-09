@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
-import { Menu, X, LogOut, User, PlusCircle } from "lucide-react";
+import { Menu, X, LogOut, User, PlusCircle , BookCopy} from "lucide-react";
 import type { AuthUser } from "../store/useAuthStore";
 
 type AuthStore = {
@@ -31,6 +31,10 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-6">
             {authUser ? (
               <>
+                <Link to="/posts" className="text-sm font-medium hover:text-primary flex items-center gap-1">
+                  <BookCopy className="w-4 h-4" />
+                  Blogs
+                </Link>
                 <Link to="/create-post" className="text-sm font-medium hover:text-primary flex items-center gap-1">
                   <PlusCircle className="w-4 h-4" />
                   Create

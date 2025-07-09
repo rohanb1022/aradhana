@@ -8,21 +8,44 @@ interface BlogPost {
   title: string;
   content: string;
   topics: string[];
+  createdAt : string;
 }
 
 interface BlogStore {
   posts: BlogPost[];
   isAddingPost: boolean;
   isDeletingPost: boolean;
+  isFetchingPosts : boolean;
   addPost: (post: BlogPost) => Promise<void>;
   removePost: (title: string) => void;
   updatePost: (title: string, updatedPost: BlogPost) => void;
+  getAllBlogs: () => Promise<void>
 }
 
 export const useBlogStore = create<BlogStore>((set) => ({
   posts: [],
   isAddingPost: false,
   isDeletingPost: false,
+  isFetchingPosts: false,
+
+  getAllBlogs : async () => {
+    set({ isFetchingPosts : true});
+    try {
+      const response = await axiosInstance.get("/blogs/getBlogs");
+      set({posts : response.data})
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to fetch posts", {
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      })
+    }finally {
+      set({isFetchingPosts : false})
+    }
+  },
 
   addPost: async (post: BlogPost) => {
     set({ isAddingPost: true });

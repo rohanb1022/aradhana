@@ -25,11 +25,17 @@ function App() {
    <div>
       {!shouldHideNavbar && <Navbar/>}
       <Routes>
+        {/* for signup page */}
         <Route path='/register' element={ !authUser ? <Signup/> : <Navigate to={"/posts"} /> }/>
+        {/* for login page */}
         <Route path='/login' element={ !authUser ? <Login/> : <Navigate to={"/posts"} /> }/>
+        {/* for landing page page */}
         <Route path='/' element={!authUser ? <LandingPage/> : <Navigate to={"/posts"}/>} />
+        {/* for posts page (basically home page) */}
         <Route path='/posts' element={<Home/> }/>
+        {/* for user profile page */}
         <Route path='/profile' element={ authUser ? <ProfilePage/> : <Navigate to={"/login"} /> }/>
+        {/* for creating post page */}
         <Route path='/create-post' element={ authUser ? <CreatePost/> : <Navigate to={"/login"} /> }/>
       </Routes>
    </div>
