@@ -2,6 +2,15 @@ import { create } from "zustand";
 import { axiosInstance } from "@/lib/axios";
 import toast from "react-hot-toast";
 
+interface CommentType {
+  _id: string;
+  content: string;
+  owner: {
+    username: string;
+    _id: string;
+  };
+}
+
 interface postType {
   _id?: string;
   title: string;
@@ -12,7 +21,7 @@ interface postType {
     _id: string;
   };
   likes: string[];
-  comments: string[];
+  comments: CommentType[];
   createdAt: string;
   updatedAt: string;
 }
@@ -21,22 +30,25 @@ interface BlogStore {
   posts: postType[];
   post: postType;
   postLikes: number;
-  likes : string[];
+  likes: string[];
   isAddingPost: boolean;
   isDeletingPost: boolean;
   isFetchingPosts: boolean;
   isFetchingPost: boolean;
+  isFetchingComments: boolean;
   addPost: (post: postType) => Promise<void>;
   removePost: (blogId: string) => void;
   updatePost: (title: string, updatedPost: postType) => void;
   getAllBlogs: () => Promise<void>;
   getSinglePost: (blogId: string) => Promise<void>;
   makeLike: (blogId: string) => Promise<void>;
+  makeComment: (blogId: string, comment: string) => Promise<void>;
+  getCommentsByBlogId: (blogId: string) => Promise<void>;
 }
 
 export const useBlogStore = create<BlogStore>((set) => ({
   posts: [],
-  likes : [],
+  likes: [],
   post: {
     _id: "",
     title: "",
@@ -56,6 +68,7 @@ export const useBlogStore = create<BlogStore>((set) => ({
   isDeletingPost: false,
   isFetchingPosts: false,
   isFetchingPost: false,
+  isFetchingComments: false,
 
   getAllBlogs: async () => {
     set({ isFetchingPosts: true });
@@ -159,27 +172,77 @@ export const useBlogStore = create<BlogStore>((set) => ({
   },
 
   makeLike: async (blogId: string) => {
-  try {
-    const response = await axiosInstance.put(`/comments/${blogId}`);
+    try {
+      const response = await axiosInstance.put(`/comments/${blogId}`);
+      set((state) => ({
+        post: {
+          ...state.post,
+          likes: response.data.likedBy,
+        },
+        postLikes: response.data.likes,
+      }));
+    } catch (error) {
+      console.error("Failed to like post:", error);
+      toast.error("Failed to like post", {
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
+    }
+  },
 
-    // Update both postLikes (count) and post.likes (array) in Zustand state
-    set((state) => ({
-      post: {
-        ...state.post,
-        likes: response.data.likedBy, // update entire likes array from backend
-      },
-      postLikes: response.data.likes, // this is just the count (number)
-    }));
-  } catch (error) {
-    console.error("Failed to like post:", error);
-    toast.error("Failed to like post", {
-      style: {
-        borderRadius: "10px",
-        background: "#333",
-        color: "#fff",
-      },
-    });
-  }
-},
-
+  makeComment: async (blogId: string, comment: string) => {
+    try {
+      const response = await axiosInstance.post(`/comments/${blogId}`, { content: comment });
+      set((state) => ({
+        post: {
+          ...state.post,
+          comments: [...state.post.comments, response.data],
+        },
+      }));
+      toast.success("Comment added successfully", {
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to add comment", {
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
+    }
+  },
+  
+  getCommentsByBlogId: async (blogId: string) => {
+    set({ isFetchingComments: true });
+    try {
+      const response = await axiosInstance.get(`/comments/${blogId}`);
+      set((state) => ({
+        post: {
+          ...state.post,
+          comments: response.data,
+        },
+      }));
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+      toast.error("Error while fetching comments", {
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
+    } finally {
+      set({ isFetchingComments: false });
+    }
+  },
 }));

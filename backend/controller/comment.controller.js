@@ -1,9 +1,10 @@
 import User from "../models/user.model.js";
 import Blog from "../models/blog.model.js"
+import Comment from "../models/comment.model.js"
 
 export const addComment = async (req , res) => {
     const { content } = req.body;
-    const blogId = req.params.id; // Assuming the blog ID is passed as a URL parameter
+    const blogId = req.params.id; //  blog ID is passed as a URL parameter
     const userId = req.user._id;
 
     const blog = await Blog.findById(blogId);
@@ -18,30 +19,36 @@ export const addComment = async (req , res) => {
 
     try {
         const comment = new Comment({
-            blog: blogId,
+            blog: blog,
             content,
-            user: userId
+            owner: user
         });
 
+        if (comment) {
+          await Blog.findByIdAndUpdate(blogId, { $push: { comments: comment } });
+          await comment.save();
+          return res.status(201).json(comment);
+        }
 
-        await comment.save();
-        await comment.populate('user', 'username');
-
-        // Optionally, you can also update the blog to include the new comment
-        await Blog.findByIdAndUpdate(blogId, { $push: { comments: comment._id } });
-
-        return res.status(201).json(comment);
     } catch (error) {
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({message : error});
     }
 }
 
 export const getCommentsByBlogId = async (req, res) => {
     const blogId = req.params.id;
-
     try {
-        const comments = await Comment.find({ blog: blogId }).populate('user', 'username');
-        return res.status(200).json(comments);
+
+      const blog = await Blog.findById({_id : blogId});
+      if (!blog){
+        return res.status(404).json({message : "blog not found"})
+      }
+
+      const comments = await Comment.find({ blog: blogId })
+      .populate("owner", "username profilePic")
+      .sort({ createdAt: -1 }); // Newest first
+
+    return res.status(200).json(comments);
     } catch (error) {
         return res.status(500).json({ message: "Internal server error" });
     }

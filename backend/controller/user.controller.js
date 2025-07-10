@@ -2,7 +2,7 @@ import User from "../models/user.model.js";
 
 export const addDetails = async (req, res) => {
   const userId = req.user._id;
-  const { background, Education, bio, profilePic } = req.body;
+  const { background, Education,  profilePic } = req.body;
   try {
     const user = await User.findById(userId);
     if (!user) {
@@ -10,9 +10,9 @@ export const addDetails = async (req, res) => {
     }
     user.background = background;
     user.Education = Education;
-    user.bio = bio;
     user.profilePic = profilePic;
     await user.save();
+    return res.status(200).json({user});
   } catch (error) {
     return res.status(500).json({ message: "Internal server error" });
   }

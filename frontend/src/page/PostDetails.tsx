@@ -5,8 +5,10 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useBlogStore } from "@/store/useBlogStore";
 import { motion } from "framer-motion";
-import { CalendarDays, User, Heart } from "lucide-react";
+import { CalendarDays, User, Heart, MessageCircleMore } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
+import AddComment from "@/components/AddComment";
+import CommentSection from "@/components/CommentSection";
 
 const PostDetails = () => {
   const { getSinglePost, post, makeLike } = useBlogStore();
@@ -16,6 +18,7 @@ const PostDetails = () => {
 
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [openCommentSection , setOpenCommentSection] = useState(false)
 
   // Fetch post on first mount
   useEffect(() => {
@@ -44,6 +47,9 @@ const PostDetails = () => {
   getSinglePost(blogId);
 };
 
+  const handleCommentSection = () => {
+    setOpenCommentSection(!openCommentSection)
+  }
 
   if (!post) {
     return (
@@ -126,6 +132,19 @@ const PostDetails = () => {
           <span className="text-white text-sm">{likeCount}</span>
         </div>
       )}
+      {
+         openCommentSection && authUser && (
+          <div>
+            <AddComment/>
+            <CommentSection blogId={blogId} />
+          </div>
+          )
+      }     
+      {
+        !openCommentSection && (
+          <MessageCircleMore className="fill-white w-8 h-8 " onClick={handleCommentSection}/>
+        )
+      }
     </motion.div>
   );
 };

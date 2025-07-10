@@ -4,12 +4,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 interface Blog {
-  _id?: string;
+ _id?: string;
   title: string;
   content: string;
   topics: string[];
-  imageUrl?: string; // optional in case image feature is not used yet
+  owner: {
+    username: string;
+    _id: string;
+  };
+  likes: string[];
+  comments: string[];
   createdAt: string;
+  updatedAt: string;
 }
 
 interface BlogCardProps {
@@ -22,19 +28,20 @@ const BlogCard = ({ blog }: BlogCardProps) => {
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.98 }}
       transition={{ type: "spring", stiffness: 300 }}
-      className="w-full md:w-[300px] lg:w-[280px] xl:w-[260px] max-h-[400px] overflow-hidden rounded-md"
+      className="w-full md:w-[300px] lg:w-[280px] xl:w-[260px] max-h-[420px] overflow-hidden rounded-md"
     >
       <Card className="bg-black text-white border-white/10 shadow-md hover:shadow-xl transition duration-300">
         {/* {blog.imageUrl && ( */}
           {<img
             src="https://images.unsplash.com/photo-1659600558336-0ec6e8f58388?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             alt={blog.title}
-            className="w-[245px] mx-auto h-40 object-cover rounded-t-md"
+            className="w-[220px] mx-auto h-32 object-cover rounded-t-md"
           />
         }
 
         <CardHeader>
           <CardTitle className="text-lg truncate">{blog.title}</CardTitle>
+          <p className="text-gray-500 text-sm w-fit h-fit" >@{blog.owner.username}</p>
           <CardDescription className="text-white/60 line-clamp-1">
             {blog.content}
           </CardDescription>

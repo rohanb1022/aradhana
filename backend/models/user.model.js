@@ -10,7 +10,6 @@ const userSchema = new mongoose.Schema(
     profilePic: String,
     background: String,
     Education: String,
-    bio: String,
   },
   { timestamps: true }
 );
