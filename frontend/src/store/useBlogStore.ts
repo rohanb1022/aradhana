@@ -21,6 +21,7 @@ interface BlogStore {
   posts: postType[];
   post: postType;
   postLikes: number;
+  likes : string[];
   isAddingPost: boolean;
   isDeletingPost: boolean;
   isFetchingPosts: boolean;
@@ -35,6 +36,7 @@ interface BlogStore {
 
 export const useBlogStore = create<BlogStore>((set) => ({
   posts: [],
+  likes : [],
   post: {
     _id: "",
     title: "",
@@ -157,12 +159,27 @@ export const useBlogStore = create<BlogStore>((set) => ({
   },
 
   makeLike: async (blogId: string) => {
-    try {
-      const response = await axiosInstance.put(`/comments/${blogId}`);
-      set({ postLikes: response.data.likes });
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to like post")
-    }
-  },
+  try {
+    const response = await axiosInstance.put(`/comments/${blogId}`);
+
+    // Update both postLikes (count) and post.likes (array) in Zustand state
+    set((state) => ({
+      post: {
+        ...state.post,
+        likes: response.data.likedBy, // update entire likes array from backend
+      },
+      postLikes: response.data.likes, // this is just the count (number)
+    }));
+  } catch (error) {
+    console.error("Failed to like post:", error);
+    toast.error("Failed to like post", {
+      style: {
+        borderRadius: "10px",
+        background: "#333",
+        color: "#fff",
+      },
+    });
+  }
+},
+
 }));

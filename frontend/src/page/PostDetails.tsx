@@ -5,23 +5,45 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useBlogStore } from "@/store/useBlogStore";
 import { motion } from "framer-motion";
-import { CalendarDays, User , Heart } from "lucide-react";
+import { CalendarDays, User, Heart } from "lucide-react";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const PostDetails = () => {
-  const { getSinglePost, post , makeLike , postLikes } = useBlogStore();
+  const { getSinglePost, post, makeLike } = useBlogStore();
+  const { authUser } = useAuthStore();
   const location = useLocation();
   const blogId = location.pathname.split("/")[2];
-  const [likeToggler , setLikeToggler] = useState(false);
 
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
 
+  // Fetch post on first mount
   useEffect(() => {
     getSinglePost(blogId);
-  }, []);
+  }, [blogId]);
 
-  const handleClick = () => {
-    makeLike(blogId);
-    getSinglePost(blogId)
-  }
+  // Sync local like states after post loads
+  useEffect(() => {
+    if (post && authUser?._id) {
+      setLiked(post.likes.includes(authUser._id));
+      setLikeCount(post.likes.length);
+    }
+  }, [post, authUser]);
+
+  // Optimistic like handler
+  const handleLike = async () => {
+  // Determine new like status
+  const newLiked = !liked;
+  setLiked(newLiked); // Optimistically toggle
+
+  // Update like count based on newLiked
+  setLikeCount((prev) => (newLiked ? prev + 1 : prev - 1));
+
+  // Backend call to update
+  await makeLike(blogId);
+  getSinglePost(blogId);
+};
+
 
   if (!post) {
     return (
@@ -36,9 +58,9 @@ const PostDetails = () => {
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="max-w-4xl mx-auto px-4 py-10 bg-black rounded-4xl shadow-lg "
+      className="max-w-4xl mx-auto px-4 py-10 bg-black rounded-4xl shadow-lg"
     >
-      {/* Image */}
+      {/* Banner Image */}
       <div className="w-full h-64 overflow-hidden rounded-2xl shadow-lg mb-6">
         <img
           src="https://images.unsplash.com/photo-1659600558336-0ec6e8f58388?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -47,7 +69,7 @@ const PostDetails = () => {
         />
       </div>
 
-      {/* Blog Title */}
+      {/* Title */}
       <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
         {post.title}
       </h1>
@@ -55,7 +77,7 @@ const PostDetails = () => {
       {/* Meta Info */}
       <div className="flex items-center gap-4 text-sm text-white/80 mb-6">
         <div className="flex items-center gap-1">
-          <User className="w-6 h-6" />
+          <User className="w-5 h-5" />
           <span>@{post.owner?.username}</span>
         </div>
         <div className="flex items-center gap-1">
@@ -81,7 +103,7 @@ const PostDetails = () => {
       </motion.div>
 
       {/* Tags */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 mb-8">
         {post.topics.map((tag, index) => (
           <span
             key={index}
@@ -92,16 +114,18 @@ const PostDetails = () => {
         ))}
       </div>
 
-      {/* Comments */}
-      <div className="flex justify-center items-center gap-1 mt-6 w-fit" >
-        <div>
-          <Heart 
-            className={`w-10 h-10 ${likeToggler ? "fill-red-500" : "fill-white"}`} 
-            onClick={() => (handleClick() , setLikeToggler(!likeToggler))}
+      {/* Like Section */}
+      {authUser && (
+        <div className="flex items-center gap-2 mt-4">
+          <Heart
+            className={`w-8 h-8 cursor-pointer transition duration-200 ${
+              liked ? "fill-red-500" : "fill-white"
+            }`}
+            onClick={handleLike}
           />
-          <p className="text-white">{postLikes}</p>
+          <span className="text-white text-sm">{likeCount}</span>
         </div>
-      </div>
+      )}
     </motion.div>
   );
 };
