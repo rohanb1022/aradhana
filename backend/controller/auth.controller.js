@@ -110,9 +110,6 @@ export async function logout(req, res) {
 
 export async function authCheck(req, res) {
   try {
-    if (!req.user) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
     res.status(200).json(req.user);
   } catch (error) {
     console.error("authCheck error:", error.message);

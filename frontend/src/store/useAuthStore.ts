@@ -12,18 +12,18 @@ export interface AuthUser {
   email: string;
   profilePic: string;
   background: string;
-  Education: string;
+  education: string;
 }
 
 export interface UserCredentials {
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
   firstname?: string;
   lastname?: string;
   username?: string;
   profilePic?: string;
   background?: string;
-  Education?: string;
+  education?: string;
 }
 
 interface AuthStore {
@@ -125,17 +125,35 @@ export const useAuthStore = create<AuthStore>((set) => ({
     }
   },
 
-  addDetails : async (formData) => {
-    set({ isAddingDetails : true})
+  // addDetails : async (formData) => {
+  //   set({ isAddingDetails : true})
+  //   try {
+  //     const response = await axiosInstance.post("/user/addDetails" , formData);
+  //     set({ authUser : response.data})
+  //     console.log(response.data)
+  //     toast.success("Details added successfully", toastOptions);
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error("Failed to add details", toastOptions);
+  //   } finally{
+  //     set({isAddingDetails : false})
+  //   }
+  // }
+
+  addDetails: async (formData) => {
+    set({ isAddingDetails: true });
     try {
-      const response = await axiosInstance.post("/user/addDetails" , {formData});
-      set({ authUser : response.data})
+      const response = await axiosInstance.post("/user/addDetails", formData);
+
+      // Correctly access user object inside response
+      set({ authUser: response.data.user });
+
       toast.success("Details added successfully", toastOptions);
     } catch (error) {
       console.log(error);
       toast.error("Failed to add details", toastOptions);
-    } finally{
-      set({isAddingDetails : false})
+    } finally {
+      set({ isAddingDetails: false });
     }
-  }
+  },
 }));

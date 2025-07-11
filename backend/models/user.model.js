@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema(
     likedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Blog" }],
     profilePic: String,
     background: String,
-    Education: String,
+    education: String,
   },
   { timestamps: true }
 );

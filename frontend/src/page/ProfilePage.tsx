@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-"use client";
 
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -18,14 +17,21 @@ const ProfilePage = () => {
     getAllBlogs();
   }, []);
 
-  const userPosts = posts.filter(post => post.owner._id === authUser?._id);
+  const userPosts = posts.filter((post) => {
+    const ownerId =
+      typeof post.owner === "object" ? post.owner._id : post.owner;
+    return ownerId === authUser?._id;
+  });
+
+  const [showEditFields, setShowEditFields] = useState(false);
 
   const handleUpdate = () => {
     const formData = {
-      Education: educationInput,
+      education: educationInput,
       background: backgroundInput,
     };
     addDetails(formData);
+    setShowEditFields(false); // Close editor after update
   };
 
   if (!authUser) {
@@ -44,75 +50,79 @@ const ProfilePage = () => {
       {/* Profile Section */}
       <div className="bg-black rounded-2xl shadow-xl p-6 mb-10">
         <div className="flex items-center gap-6">
-          <div className="w-24 h-24 bg-white/10 rounded-full" /> {/* Placeholder for ProfilePic */}
+          <div className="w-24 h-24 bg-white/10 rounded-full" />
           <div>
             <h1 className="text-3xl font-bold">@{authUser.username}</h1>
             <p className="text-white/60">
-              {authUser.firstname} {authUser.lastname} • {authUser.email}
+               • {authUser.email}
             </p>
           </div>
         </div>
 
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {/* Education Field */}
           <div>
             <label className="block text-sm text-white/60">Education</label>
-            {authUser.Education ? (
-              <p className="text-white font-medium">{authUser.Education}</p>
-            ) : (
-              <div>
-                <p className="text-red-500 text-sm">Not Provided</p>
-                <input
-                  type="text"
-                  className="mt-1 w-full bg-white/10 border border-white/20 p-2 rounded-lg text-white focus:outline-none"
-                  value={educationInput}
-                  onChange={(e) => setEducationInput(e.target.value)}
-                  placeholder="Enter your education"
-                />
-              </div>
+            <p className="text-white font-medium">
+              {authUser.education || "Not Provided"}
+            </p>
+            {showEditFields && (
+              <input
+                type="text"
+                className="mt-2 w-full bg-white/10 border border-white/20 p-2 rounded-lg text-white focus:outline-none"
+                value={educationInput}
+                onChange={(e) => setEducationInput(e.target.value)}
+                placeholder="Enter your education"
+              />
             )}
           </div>
 
-          {/* Background Field */}
           <div>
             <label className="block text-sm text-white/60">Background</label>
-            {authUser.background ? (
-              <p className="text-white font-medium">{authUser.background}</p>
-            ) : (
-              <div>
-                <p className="text-red-500 text-sm">Not Provided</p>
-                <input
-                  type="text"
-                  className="mt-1 w-full bg-white/10 border border-white/20 p-2 rounded-lg text-white focus:outline-none"
-                  value={backgroundInput}
-                  onChange={(e) => setBackgroundInput(e.target.value)}
-                  placeholder="Company, college or school name"
-                />
-              </div>
+            <p className="text-white font-medium">
+              {authUser.background || "Not Provided"}
+            </p>
+            {showEditFields && (
+              <input
+                type="text"
+                className="mt-2 w-full bg-white/10 border border-white/20 p-2 rounded-lg text-white focus:outline-none"
+                value={backgroundInput}
+                onChange={(e) => setBackgroundInput(e.target.value)}
+                placeholder="Company, college or school name"
+              />
             )}
           </div>
         </div>
 
-        {/* Submit Button */}
-        {(!authUser.Education || !authUser.background) && (
-          <div className="mt-6">
+        <div className="mt-6 flex gap-4">
+          <Button
+            onClick={() => setShowEditFields((prev) => !prev)}
+            className="bg-white text-black rounded-xl px-6 py-2 hover:bg-gray-200"
+          >
+            {showEditFields ? "Cancel" : "Update Details"}
+          </Button>
+
+          {showEditFields && (
             <Button
               onClick={handleUpdate}
-              className="bg-white text-black rounded-xl px-6 py-2 hover:bg-gray-200"
+              className="bg-blue-600 text-white rounded-xl px-6 py-2 hover:bg-blue-700"
             >
-              Save Details
+              Save
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* User Blogs Section */}
       <h2 className="text-2xl font-bold mb-4">Your Posts</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {userPosts.map((blog) => (
-          <BlogCard key={blog._id} blog={blog} />
-        ))}
-      </div>
+      {userPosts.length === 0 ? (
+        <p className="text-white/60">You haven't written any posts yet.</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {userPosts.map((blog) => (
+            <BlogCard key={blog._id} blog={blog} />
+          ))}
+        </div>
+      )}
     </motion.div>
   );
 };

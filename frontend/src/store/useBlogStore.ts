@@ -2,15 +2,6 @@ import { create } from "zustand";
 import { axiosInstance } from "@/lib/axios";
 import toast from "react-hot-toast";
 
-interface CommentType {
-  _id: string;
-  content: string;
-  owner: {
-    username: string;
-    _id: string;
-  };
-}
-
 interface postType {
   _id?: string;
   title: string;
@@ -21,7 +12,7 @@ interface postType {
     _id: string;
   };
   likes: string[];
-  comments: CommentType[];
+  comments: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -70,6 +61,10 @@ export const useBlogStore = create<BlogStore>((set) => ({
   isFetchingPost: false,
   isFetchingComments: false,
 
+  /**
+   Fetches all posts from the server and updates the state with the posts.
+   Shows a toast notification if the request fails.
+   */
   getAllBlogs: async () => {
     set({ isFetchingPosts: true });
     try {
@@ -89,6 +84,10 @@ export const useBlogStore = create<BlogStore>((set) => ({
     }
   },
 
+  /**
+   Adds a new post to the server and updates the state with the new post.
+   Shows a toast notification if the request succeeds or fails.
+   */
   addPost: async (post: postType) => {
     set({ isAddingPost: true });
     try {
@@ -117,6 +116,11 @@ export const useBlogStore = create<BlogStore>((set) => ({
     }
   },
 
+
+  /**
+    Removes a post from the server and updates the state with the new posts.
+    Shows a toast notification if the request succeeds or fails.
+   */
   removePost: async (blogId: string) => {
     set({ isDeletingPost: true });
     try {
@@ -146,6 +150,11 @@ export const useBlogStore = create<BlogStore>((set) => ({
     }
   },
 
+/**
+  Fetches a single post from the server using the provided blog ID
+  and updates the state with the retrieved post data.
+  Shows a toast notification if the request fails.
+*/
   getSinglePost: async (blogId: string) => {
     set({ isFetchingPost: true });
     try {
@@ -163,6 +172,12 @@ export const useBlogStore = create<BlogStore>((set) => ({
     }
   },
 
+  /**
+   Updates a post in the store with a new version.
+  
+   The title of the post to be updated.
+   The new version of the post.
+  */
   updatePost: (title: string, updatedPost: postType) => {
     set((state) => ({
       posts: state.posts.map((post) =>
@@ -171,6 +186,10 @@ export const useBlogStore = create<BlogStore>((set) => ({
     }));
   },
 
+  /**
+    Likes a post in the store and updates the state with the new
+    number of likes and the IDs of the users who liked the post.
+   */
   makeLike: async (blogId: string) => {
     try {
       const response = await axiosInstance.put(`/comments/${blogId}`);
@@ -193,6 +212,14 @@ export const useBlogStore = create<BlogStore>((set) => ({
     }
   },
 
+
+  /**
+    Adds a comment to the post in the store and updates the state
+    with the new comment.
+
+    The ID of the blog post to which the comment is being added.
+    The content of the comment to be added.
+  */
   makeComment: async (blogId: string, comment: string) => {
     try {
       const response = await axiosInstance.post(`/comments/${blogId}`, { content: comment });
@@ -221,6 +248,12 @@ export const useBlogStore = create<BlogStore>((set) => ({
     }
   },
   
+  /**
+    Fetches all comments for a specific blog post by ID from the
+    server and updates the state with the comments.
+
+    The ID of the blog post to which the comments belong.
+  */
   getCommentsByBlogId: async (blogId: string) => {
     set({ isFetchingComments: true });
     try {

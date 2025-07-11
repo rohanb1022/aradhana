@@ -2,9 +2,18 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import CTA from "@/components/CTA";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const LandingPage = () => {
-  const { authUser } = useAuthStore();
+    const { authUser } = useAuthStore();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (authUser) {
+      navigate("/posts");
+    }
+  }, [authUser]);
   return (
     <main className="max-h-[90vh] w-full bg-black text-white px-10 md:px-10 py-10 rounded-3xl ">
       {/* Hero Section */}
