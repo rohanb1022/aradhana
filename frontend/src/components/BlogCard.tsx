@@ -8,6 +8,7 @@ interface Blog {
   title: string;
   content: string;
   topics: string[];
+  image : string;
   owner: {
     username: string;
     _id: string;
@@ -22,6 +23,8 @@ interface BlogCardProps {
   blog: Blog;
 }
 
+const defaultPage = "https://plus.unsplash.com/premium_photo-1706382043344-4a901b8e1864?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fHRlY2hub2xvZ2ljYWwlMjBibG9nc3xlbnwwfHwwfHx8MA%3D%3D"
+
 const BlogCard = ({ blog }: BlogCardProps) => {
   return (
     <motion.div
@@ -33,7 +36,7 @@ const BlogCard = ({ blog }: BlogCardProps) => {
       <Card className="bg-black text-white border-white/10 shadow-md hover:shadow-xl transition duration-300">
         {/* {blog.imageUrl && ( */}
           {<img
-            src="https://images.unsplash.com/photo-1659600558336-0ec6e8f58388?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            src={blog.image || defaultPage} 
             alt={blog.title}
             className="w-[220px] mx-auto h-32 object-cover rounded-t-md"
           />

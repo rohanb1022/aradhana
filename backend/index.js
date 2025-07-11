@@ -1,5 +1,6 @@
-import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
+import express from "express";
 import cors from "cors";
 import connectDB from "./lib/db.js";
 import authRoutes from "./routes/auth.route.js";
@@ -8,9 +9,6 @@ import userRoutes from "./routes/user.route.js";
 import commentRoutes from "./routes/comment.route.js";
 import cookieParser from "cookie-parser";
 
-
-
-dotenv.config();
 const app = express();
 
 app.use(cookieParser());
@@ -21,7 +19,7 @@ app.use(
   })
 );
 app.use(express.json());
-
+app.use(express.json({ limit: '10mb' }));
 app.use("/api/auth", authRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/user", userRoutes);

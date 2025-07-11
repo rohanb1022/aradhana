@@ -7,6 +7,7 @@ interface postType {
   title: string;
   content: string;
   topics: string[];
+  image : string;
   owner: {
     username: string;
     _id: string;
@@ -16,6 +17,14 @@ interface postType {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface CreatePostInput {
+  title: string;
+  content: string;
+  topics: string[];
+  image?: string; // Optional base64 string
+}
+
 
 interface BlogStore {
   posts: postType[];
@@ -27,7 +36,7 @@ interface BlogStore {
   isFetchingPosts: boolean;
   isFetchingPost: boolean;
   isFetchingComments: boolean;
-  addPost: (post: postType) => Promise<void>;
+  addPost: (post: CreatePostInput) => Promise<void>;
   removePost: (blogId: string) => void;
   updatePost: (title: string, updatedPost: postType) => void;
   getAllBlogs: () => Promise<void>;
@@ -45,6 +54,7 @@ export const useBlogStore = create<BlogStore>((set) => ({
     title: "",
     content: "",
     topics: [],
+    image : "",
     owner: {
       username: "",
       _id: "",
@@ -88,34 +98,35 @@ export const useBlogStore = create<BlogStore>((set) => ({
    Adds a new post to the server and updates the state with the new post.
    Shows a toast notification if the request succeeds or fails.
    */
-  addPost: async (post: postType) => {
-    set({ isAddingPost: true });
-    try {
-      const response = await axiosInstance.post("/blogs/create", post);
-      set((state) => ({
-        posts: [...state.posts, response.data],
-      }));
-      toast.success("Post added successfully", {
-        style: {
-          borderRadius: "10px",
-          background: "#333",
-          color: "#fff",
-        },
-      });
-    } catch (error) {
-      console.error("Error adding post:", error);
-      toast.error("Failed to add post", {
-        style: {
-          borderRadius: "10px",
-          background: "#333",
-          color: "#fff",
-        },
-      });
-    } finally {
-      set({ isAddingPost: false });
-    }
-  },
+  addPost: async (post: CreatePostInput) => {
+  set({ isAddingPost: true });
+  try {
+    const response = await axiosInstance.post("/blogs/create", post);
 
+    set((state) => ({
+      posts: [...state.posts, response.data],
+    }));
+
+    toast.success("Post added successfully", {
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
+  } catch (error) {
+    console.error("Error adding post:", error);
+    toast.error("Failed to add post", {
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
+  } finally {
+    set({ isAddingPost: false });
+  }
+},
 
   /**
     Removes a post from the server and updates the state with the new posts.

@@ -1,6 +1,7 @@
 import express from "express";
 import {  getAllBlogs, getBlogById, createBlog  , deleteBlog } from "../controller/blog.controller.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
+import {upload} from '../middleware/multer.js';
 
 const router = express.Router();
 
@@ -11,7 +12,7 @@ router.get("/getBlogs", getAllBlogs);
 router.get("/:id", getBlogById);
 
 // POST /api/blogs -> create a new blog
-router.post("/create", verifyToken , createBlog);
+router.post('/create', verifyToken, upload.single('image'), createBlog);
 
 // Delete /api/blogs/deleteBlog/:id -> delete a specific blog by ID
 router.delete("/delete/:id", verifyToken , deleteBlog);

@@ -59,6 +59,8 @@ const PostDetails = () => {
     );
   }
 
+  const defaultimage = "https://plus.unsplash.com/premium_photo-1706382043344-4a901b8e1864?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fHRlY2hub2xvZ2ljYWwlMjBibG9nc3xlbnwwfHwwfHx8MA%3D%3D"
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -69,7 +71,7 @@ const PostDetails = () => {
       {/* Banner Image */}
       <div className="w-full h-64 overflow-hidden rounded-2xl shadow-lg mb-6">
         <img
-          src="https://images.unsplash.com/photo-1659600558336-0ec6e8f58388?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          src={post.image || defaultimage}
           alt="Post Banner"
           className="w-full h-full object-cover"
         />
