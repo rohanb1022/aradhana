@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useBlogStore } from "@/store/useBlogStore";
 import { toast } from "react-hot-toast";
 import { X } from "lucide-react";
+import { axiosInstance } from "@/lib/axios";
 
 const CreatePost = () => {
   const [title, setTitle] = useState("");
@@ -67,13 +68,9 @@ const CreatePost = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/blogs/create", {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
+      const res = await axiosInstance.post("/blogs/create" , formData);
 
-      if (!res.ok) {
+      if (!res) {
         throw new Error("Failed to create blog post");
       }
 
