@@ -30,7 +30,7 @@ const Home = () => {
           placeholder="Search by title or topic..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm rounded-4xl bg-black text-gray-300 mx-auto w-[20vw]"></Input>
+          className="lg:max-w-sm sm:max-w-[80px] rounded-4xl bg-black text-gray-300 mx-auto w-[20vw]"></Input>
       </div>
 
       {filteredPosts.length === 0 ? (

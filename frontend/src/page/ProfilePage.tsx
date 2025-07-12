@@ -1,130 +1,144 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// ✅ FIXED useAuthStore.ts
+import { create } from "zustand";
+import { axiosInstance } from "../lib/axios.ts";
+import toast from "react-hot-toast";
 
-import { useEffect, useState } from "react";
-import { useAuthStore } from "@/store/useAuthStore";
-import { useBlogStore } from "@/store/useBlogStore";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import BlogCard from "@/components/BlogCard";
+export interface AuthUser {
+  _id: string;
+  firstname: string;
+  lastname: string;
+  username: string;
+  email: string;
+  profilePic: string;
+  background: string;
+  education: string;
+}
 
-const ProfilePage = () => {
-  const { authUser, addDetails } = useAuthStore();
-  const { posts, getAllBlogs } = useBlogStore();
-  const [educationInput, setEducationInput] = useState("");
-  const [backgroundInput, setBackgroundInput] = useState("");
+export interface UserCredentials {
+  email?: string;
+  password?: string;
+  firstname?: string;
+  lastname?: string;
+  username?: string;
+  profilePic?: string;
+  background?: string;
+  education?: string;
+}
 
-  useEffect(() => {
-    getAllBlogs();
-  }, []);
+interface AuthStore {
+  authUser: AuthUser | null;
+  token: string | null;
 
-  const userPosts = posts.filter((post) => {
-    const ownerId =
-      typeof post.owner === "object" ? post.owner._id : post.owner;
-    return ownerId === authUser?._id;
-  });
+  isLoggingIn: boolean;
+  isSigningUp: boolean;
+  isCheckingAuth: boolean;
+  isLoggingOut: boolean;
+  isAddingDetails: boolean;
 
-  const [showEditFields, setShowEditFields] = useState(false);
+  checkAuth: () => Promise<void>;
+  signin: (userData: UserCredentials) => Promise<void>;
+  signup: (userData: UserCredentials) => Promise<void>;
+  logout: () => Promise<void>;
+  addDetails: (formData: UserCredentials) => Promise<void>;
+}
 
-  const handleUpdate = () => {
-    const formData = {
-      education: educationInput,
-      background: backgroundInput,
-    };
-    addDetails(formData);
-    setShowEditFields(false); // Close editor after update
-  };
-
-  if (!authUser) {
-    return (
-      <div className="text-white text-center mt-10">Loading user data...</div>
-    );
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="max-w-5xl mx-auto px-6 py-10 text-white"
-    >
-      {/* Profile Section */}
-      <div className="bg-black rounded-2xl shadow-xl p-6 mb-10">
-        <div className="flex items-center gap-6">
-          <div className="w-24 h-24 bg-white/10 rounded-full" />
-          <div>
-            <h1 className="text-3xl font-bold">@{authUser.username}</h1>
-            <p className="text-white/60">
-               • {authUser.email}
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm text-white/60">Education</label>
-            <p className="text-white font-medium">
-              {authUser.education || "Not Provided"}
-            </p>
-            {showEditFields && (
-              <input
-                type="text"
-                className="mt-2 w-full bg-white/10 border border-white/20 p-2 rounded-lg text-white focus:outline-none"
-                value={educationInput}
-                onChange={(e) => setEducationInput(e.target.value)}
-                placeholder="Enter your education"
-              />
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm text-white/60">Background</label>
-            <p className="text-white font-medium">
-              {authUser.background || "Not Provided"}
-            </p>
-            {showEditFields && (
-              <input
-                type="text"
-                className="mt-2 w-full bg-white/10 border border-white/20 p-2 rounded-lg text-white focus:outline-none"
-                value={backgroundInput}
-                onChange={(e) => setBackgroundInput(e.target.value)}
-                placeholder="Company, college or school name"
-              />
-            )}
-          </div>
-        </div>
-
-        <div className="mt-6 flex gap-4">
-          <Button
-            onClick={() => setShowEditFields((prev) => !prev)}
-            className="bg-white text-black rounded-xl px-6 py-2 hover:bg-gray-200"
-          >
-            {showEditFields ? "Cancel" : "Update Details"}
-          </Button>
-
-          {showEditFields && (
-            <Button
-              onClick={handleUpdate}
-              className="bg-blue-600 text-white rounded-xl px-6 py-2 hover:bg-blue-700"
-            >
-              Save
-            </Button>
-          )}
-        </div>
-      </div>
-
-      {/* User Blogs Section */}
-      <h2 className="text-2xl font-bold mb-4">Your Posts</h2>
-      {userPosts.length === 0 ? (
-        <p className="text-white/60">You haven't written any posts yet.</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {userPosts.map((blog) => (
-            <BlogCard key={blog._id} blog={blog} />
-          ))}
-        </div>
-      )}
-    </motion.div>
-  );
+const toastOptions = {
+  style: {
+    borderRadius: "10px",
+    background: "#333",
+    color: "#fff",
+  },
 };
 
-export default ProfilePage;
+export const useAuthStore = create<AuthStore>((set) => ({
+  authUser: null,
+  token: null,
+
+  isLoggingIn: false,
+  isSigningUp: false,
+  isCheckingAuth: false,
+  isLoggingOut: false,
+  isAddingDetails: false,
+
+  checkAuth: async () => {
+    set({ isCheckingAuth: true });
+    try {
+      const response = await axiosInstance.get("/auth/check-auth");
+      set({
+        authUser: response.data,
+        token: response.data.token ?? null,
+      });
+    } catch (error) {
+      set({ authUser: null, token: null });
+    } finally {
+      set({ isCheckingAuth: false });
+    }
+  },
+
+  signin: async (userData) => {
+    set({ isLoggingIn: true });
+    try {
+      const response = await axiosInstance.post("/auth/login", userData);
+      set({
+        authUser: response.data,
+        token: response.data.token ?? null,
+      });
+      toast.success("Welcome back! 🎉", toastOptions);
+    } catch (error: any) {
+      const message = error?.response?.data?.message || "Login failed.";
+      toast.error(message, toastOptions);
+      set({ authUser: null, token: null });
+    } finally {
+      set({ isLoggingIn: false });
+    }
+  },
+
+  signup: async (userData) => {
+    set({ isSigningUp: true });
+    try {
+      const response = await axiosInstance.post("/auth/register", userData);
+      set({
+        authUser: response.data,
+        token: response.data.token ?? null,
+      });
+      toast.success("Account created! 🚀", toastOptions);
+    } catch (error: any) {
+      const message = error?.response?.data?.message || "Signup failed.";
+      toast.error(message, toastOptions);
+      set({ authUser: null, token: null });
+    } finally {
+      set({ isSigningUp: false });
+    }
+  },
+
+  logout: async () => {
+    set({ isLoggingOut: true });
+    try {
+      await axiosInstance.post("/auth/logout");
+      set({ authUser: null, token: null });
+      toast.success("Logged out successfully 👋", toastOptions);
+    } catch (error) {
+      toast.error("Logout failed.", toastOptions);
+    } finally {
+      set({ isLoggingOut: false });
+    }
+  },
+
+  addDetails: async (formData) => {
+    set({ isAddingDetails: true });
+    try {
+      const response = await axiosInstance.post("/user/addDetails", formData);
+
+      set({ authUser: response.data.user });
+
+      toast.success("Details added successfully", toastOptions);
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to add details", toastOptions);
+    } finally {
+      set({ isAddingDetails: false });
+    }
+  },
+}));

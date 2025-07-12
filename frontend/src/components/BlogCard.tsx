@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import type { Comment } from "@/store/useBlogStore";
 
 interface Blog {
  _id?: string;
@@ -14,7 +15,7 @@ interface Blog {
     _id: string;
   };
   likes: string[];
-  comments: string[];
+  comments: Comment[];
   createdAt: string;
   updatedAt: string;
 }
@@ -51,16 +52,16 @@ const BlogCard = ({ blog }: BlogCardProps) => {
         </CardHeader>
 
         <CardContent>
-          <div className="flex flex-wrap gap-2 mb-2">
+          <div className="overflow-x-clip flex gap-1">
             {blog.topics.map((topic, idx) => (
-              <Badge key={idx} variant="secondary" className="bg-white text-black">
+              <Badge key={idx} variant="secondary" className="bg-white text-black tracking-tight text-[0.7rem]">
                 {topic}
               </Badge>
             ))}
           </div>
             <Button 
               variant="outline" 
-              className="w-full text-black bg-white hover:bg-gray-100"
+              className="w-full text-black bg-white hover:bg-gray-100 mt-4 "
               onClick={() => window.location.href = `/detailedPost/${blog._id}`} 
             >
               View

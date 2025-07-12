@@ -46,7 +46,7 @@ interface BlogStore {
   updateBlog: (blogId: string, updatedData: Partial<postType>) => Promise<void>;
 }
 
-interface Comment {
+export interface Comment {
   _id: string;
   content: string;
   owner: {
