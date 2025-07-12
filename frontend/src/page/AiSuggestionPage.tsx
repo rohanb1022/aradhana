@@ -1,8 +1,9 @@
-import { useState } from "react";
+import {useRef , useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "react-hot-toast";
 import { axiosInstance } from "@/lib/axios";
+import { ClipboardCopy } from "lucide-react";
 
 const AiSuggestion = () => {
   const [input, setInput] = useState("");
@@ -11,6 +12,18 @@ const AiSuggestion = () => {
     title: string;
     points: string[];
   }>(null);
+
+  const pointsRef = useRef<HTMLDivElement>(null);
+  const handleCopy = () => {
+    if (pointsRef.current) {
+      const textToCopy = pointsRef.current.innerText;
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        toast.success("Copied key points to clipboard!");
+      }).catch(() => {
+        toast.error("Failed to copy");
+      });
+    }
+  };
 
   const handleSubmit = async () => {
     if (!input.trim()) return toast.error("Please enter something.");
@@ -49,7 +62,10 @@ const AiSuggestion = () => {
       </Button>
 
       {aiResponse && (
-        <div className="mt-4 border-t border-white/20 pt-4 space-y-2">
+        <div className="mt-4 border-t border-white/20 pt-4 space-y-2" ref={pointsRef} >
+          <div>
+            <ClipboardCopy onClick={handleCopy} className="h-5 w-5"/>
+          </div>
           <h3 className="text-lg font-semibold">Suggested Title:</h3>
           <p className="text-green-400">{aiResponse.title}</p>
 
