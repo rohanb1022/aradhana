@@ -13,7 +13,7 @@ import CommentSection from "@/components/CommentSection";
 import { toast } from "react-hot-toast";
 
 const PostDetails = () => {
-  const { getSinglePost, post, makeLike } = useBlogStore();
+  const { getSinglePost, post, makeLike , removePost} = useBlogStore();
   const { authUser } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
@@ -51,7 +51,7 @@ const PostDetails = () => {
     if (!confirmDelete) return;
 
     try {
-      await useBlogStore.getState().deleteBlog(post._id);
+      await removePost(blogId);
       toast.success("Blog deleted successfully");
       navigate("/");
     } catch (error) {

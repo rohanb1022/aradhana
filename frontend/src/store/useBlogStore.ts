@@ -47,6 +47,7 @@ interface BlogStore {
 }
 
 export const useBlogStore = create<BlogStore>((set) => ({
+  
   posts: [],
   likes: [],
   post: {

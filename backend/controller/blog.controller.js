@@ -83,7 +83,6 @@ export const deleteBlog = async (req, res) => {
     }
 
     await Blog.findByIdAndDelete(blogId);
-    await User.findByIdAndUpdate(userId, { $pull: { blogs: blogId } });
     return res.status(200).json({
       message: "Blog deleted successfully",
       title: blog.title,
