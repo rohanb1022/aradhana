@@ -12,12 +12,18 @@ import aiRoutes from "./routes/apiAi.route.js";
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",        // for local dev
+  "https://your-frontend-url.com" // for production (replace with real URL)
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173", // exact origin of frontend
-    credentials: true,               // allow cookies and auth headers
+    origin: allowedOrigins,
+    credentials: true,
   })
 );
+
 app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
