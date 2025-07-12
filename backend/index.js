@@ -9,6 +9,9 @@ import userRoutes from "./routes/user.route.js";
 import commentRoutes from "./routes/comment.route.js";
 import cookieParser from "cookie-parser";
 import aiRoutes from "./routes/apiAi.route.js";
+import rateLimit from "express-rate-limit";
+
+
 
 const app = express();
 
@@ -27,6 +30,17 @@ app.use(
 app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // limit each IP to 10 requests per minute
+  message: {
+    status: 429,
+    error: "Too many requests. Please try again after a minute.",
+  },
+});
+
+app.use("/api/ai", limiter); // apply limiter only to AI routes
 app.use("/api/auth", authRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/user", userRoutes);
