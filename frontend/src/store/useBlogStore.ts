@@ -38,12 +38,12 @@ interface BlogStore {
   isFetchingComments: boolean;
   addPost: (post: CreatePostInput) => Promise<void>;
   removePost: (blogId: string) => void;
-  updatePost: (title: string, updatedPost: postType) => void;
   getAllBlogs: () => Promise<void>;
   getSinglePost: (blogId: string) => Promise<void>;
   makeLike: (blogId: string) => Promise<void>;
   makeComment: (blogId: string, comment: string) => Promise<void>;
   getCommentsByBlogId: (blogId: string) => Promise<void>;
+  updateBlog: (blogId: string, updatedData: Partial<postType>) => Promise<void>;
 }
 
 export const useBlogStore = create<BlogStore>((set) => ({
@@ -184,20 +184,6 @@ export const useBlogStore = create<BlogStore>((set) => ({
   },
 
   /**
-   Updates a post in the store with a new version.
-  
-   The title of the post to be updated.
-   The new version of the post.
-  */
-  updatePost: (title: string, updatedPost: postType) => {
-    set((state) => ({
-      posts: state.posts.map((post) =>
-        post.title === title ? updatedPost : post
-      ),
-    }));
-  },
-
-  /**
     Likes a post in the store and updates the state with the new
     number of likes and the IDs of the users who liked the post.
    */
@@ -262,7 +248,6 @@ export const useBlogStore = create<BlogStore>((set) => ({
   /**
     Fetches all comments for a specific blog post by ID from the
     server and updates the state with the comments.
-
     The ID of the blog post to which the comments belong.
   */
   getCommentsByBlogId: async (blogId: string) => {
@@ -289,4 +274,41 @@ export const useBlogStore = create<BlogStore>((set) => ({
       set({ isFetchingComments: false });
     }
   },
+  
+
+  /**
+    Updates a blog post on the server and updates the state with the new
+    version of the post.
+    The ID of the blog post to be updated.
+    The new version of the blog post. Only the fields specified in this
+    object will be updated on the server.
+  */
+  updateBlog: async (blogId: string, updatedData: Partial<postType>) => {
+  try {
+    const response = await axiosInstance.put(`/blogs/update/${blogId}`, updatedData);
+    set((state) => ({
+      posts: state.posts.map((post) =>
+        post._id === blogId ? response.data : post
+      ),
+      post: response.data,
+    }));
+    toast.success("Post updated successfully", {
+      style: {
+        borderRadius: "10px",
+        background: "#333",
+        color: "#fff",
+      },
+    });
+  } catch (error) {
+    console.error("Failed to update post:", error);
+    toast.error("Error updating post", {
+      style: {
+        borderRadius: "10px",
+        background: "#333",
+        color: "#fff",
+      },
+    });
+  }
+},
+
 }));

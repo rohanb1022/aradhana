@@ -11,15 +11,15 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-app.use(cookieParser());
 app.use(
   cors({
     origin: "http://localhost:5173", // exact origin of frontend
     credentials: true,               // allow cookies and auth headers
   })
 );
-app.use(express.json());
-app.use(express.json({ limit: '10mb' }));
+app.use(cookieParser());
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use("/api/auth", authRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/user", userRoutes);
@@ -27,7 +27,7 @@ app.use("/api/comments", commentRoutes);
 
 
 app.get("/", (req, res) => {
-  res.send("API is running...");
+  res.send("APP is running...");
 });
 
 const PORT = process.env.PORT || 5000;

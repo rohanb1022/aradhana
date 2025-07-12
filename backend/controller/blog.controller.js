@@ -1,6 +1,8 @@
 import Blog from "../models/blog.model.js";
 import User from "../models/user.model.js";
+import cloudinary from "../lib/cloudinary.js";
 
+// give all the blogs of all the users
 export const getAllBlogs = async (req, res) => {
   try {
     const blogs = await Blog.find()
@@ -12,6 +14,7 @@ export const getAllBlogs = async (req, res) => {
   }
 };
 
+// give all the blogs of a particular user
 export const getBlogById = async (req, res) => {
   const blogId = req.params.id;
   try {
@@ -25,6 +28,7 @@ export const getBlogById = async (req, res) => {
   }
 };
 
+// create a blog (only authenticated users)
 export const createBlog = async (req, res) => {
   const { title, content, topics } = req.body;
   const owner = req.user._id;
@@ -62,7 +66,7 @@ export const createBlog = async (req, res) => {
   }
 };
 
-
+// delete the blogs (only owner can do)
 export const deleteBlog = async (req, res) => {
   const blogId = req.params.id;
   const userId = req.user._id;
@@ -89,3 +93,41 @@ export const deleteBlog = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+// update the blog (only owner can do)
+export const updateBlog = async (req, res) => {
+  try {
+    const { title, content, topics, image } = req.body;
+    const blogId = req.params.id;
+    const userId = req.user._id;
+
+    // Check blog exists
+    const blog = await Blog.findById(blogId);
+    if (!blog) return res.status(404).json({ message: "Blog not found" });
+
+    // Check ownership
+    if (blog.owner.toString() !== userId.toString()) {
+      return res.status(403).json({ message: "Unauthorized to update" });
+    }
+
+    // Optional image upload
+    let imageUrl = blog.image;
+    if (image && image.startsWith("data:image")) {
+      const uploadResponse = await cloudinary.uploader.upload(image);
+      imageUrl = uploadResponse.secure_url;
+    }
+
+    // Update the blog
+    blog.title = title;
+    blog.content = content;
+    blog.topics = topics;
+    blog.image = imageUrl;
+
+    await blog.save();
+    res.status(200).json(blog);
+  } catch (error) {
+    console.error("Error updating blog:", error);
+    res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
+};
+

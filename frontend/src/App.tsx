@@ -11,6 +11,7 @@ import Home from "./page/Home.tsx";
 import LandingPage from "./page/LandingPage.tsx";
 import ProfilePage from "./page/ProfilePage.tsx";
 import PostDetails from "./page/PostDetails.tsx";
+import EditBlog from "./page/EditBlog.tsx";
 import { Loader } from "lucide-react";
 
 function App() {
@@ -76,6 +77,10 @@ function App() {
         />
         {/* for post detailed view page */}
         <Route path="/detailedPost/:id" element={<PostDetails />} />
+
+        { /* for editing blog */ }
+        <Route path="/edit/:blogId" element={authUser ? <EditBlog /> : <Navigate to={"/login"} />} />
+
       </Routes>
     </div>
   );
