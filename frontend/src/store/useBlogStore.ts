@@ -13,7 +13,7 @@ interface postType {
     _id: string;
   };
   likes: string[];
-  comments: string[];
+  comments: Comment[];
   createdAt: string;
   updatedAt: string;
 }
@@ -46,6 +46,15 @@ interface BlogStore {
   updateBlog: (blogId: string, updatedData: Partial<postType>) => Promise<void>;
 }
 
+interface Comment {
+  _id: string;
+  content: string;
+  owner: {
+    username: string;
+    _id: string;
+  };
+}
+
 export const useBlogStore = create<BlogStore>((set) => ({
   
   posts: [],
@@ -61,7 +70,14 @@ export const useBlogStore = create<BlogStore>((set) => ({
       _id: "",
     },
     likes: [],
-    comments: [],
+    comments: [{
+      _id: "",
+      content: "",
+      owner: {
+        username: "",
+        _id: "",
+      },
+    }],
     createdAt: "",
     updatedAt: "",
   },

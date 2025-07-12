@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useBlogStore } from "@/store/useBlogStore";
 import { motion } from "framer-motion";
-import { CalendarDays, User, Heart, MessageCircleMore } from "lucide-react";
+import { CalendarDays, User, Heart, MessageCircleMore , Loader} from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import AddComment from "@/components/AddComment";
 import CommentSection from "@/components/CommentSection";
@@ -62,7 +62,7 @@ const PostDetails = () => {
   if (!post) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <p className="text-white text-lg">Loading post...</p>
+        <Loader className="size-10 animate-spin" />
       </div>
     );
   }
@@ -135,7 +135,7 @@ const PostDetails = () => {
       {authUser && (
         <div className="flex items-center gap-4 mt-6">
           {/* Like Icon */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center">
             <Heart
               className={`w-8 h-8 cursor-pointer transition duration-200 ${
                 liked ? "fill-red-500" : "fill-white"
@@ -147,11 +147,12 @@ const PostDetails = () => {
 
           {/* Comment Toggle */}
           <div
-            className="cursor-pointer"
+            className="cursor-pointer flex items-center"
             onClick={handleCommentSection}
             title={openCommentSection ? "Hide Comments" : "Show Comments"}
           >
             <MessageCircleMore className="fill-white w-7 h-7" />
+            <span className="text-white text-md">{post.comments.length}</span>
           </div>
 
           {/* Edit & Delete for Owner */}

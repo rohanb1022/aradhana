@@ -54,7 +54,7 @@ const CommentSection = ({ blogId }: { blogId: string }) => {
                     })}
                   </p>
                 </div>
-                <p className="mt-1 text-white/90 text-sm leading-relaxed whitespace-pre-line">
+                <p className="mt-1 text-white/70 text-sm leading-relaxed text-left whitespace-pre-line">
                   {comment.content}
                 </p>
               </div>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
-import { Menu, X, LogOut, User, PlusCircle , BookCopy} from "lucide-react";
+import { Menu, X, LogOut, User, PlusCircle , BookCopy, Sparkles} from "lucide-react";
 import type { AuthUser } from "../store/useAuthStore";
 
 type AuthStore = {
@@ -31,20 +31,24 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-6">
             {authUser ? (
               <>
+                <Link to="/ai/suggestion" className="text-sm font-medium hover:text-primary flex items-center gap-1">
+                  <Sparkles strokeWidth={1.2} className="w-6 h-6 animate-spin"/>
+                  Get AI Help
+                </Link>
                 <Link to="/posts" className="text-sm font-medium hover:text-primary flex items-center gap-1">
-                  <BookCopy className="w-4 h-4" />
+                  <BookCopy className="w-6 h-6" />
                   Blogs
                 </Link>
                 <Link to="/create-post" className="text-sm font-medium hover:text-primary flex items-center gap-1">
-                  <PlusCircle className="w-4 h-4" />
+                  <PlusCircle className="w-6 h-6" />
                   Create
                 </Link>
                 <Link to="/profile" className="text-sm font-medium hover:text-primary flex items-center gap-1">
-                  <User className="w-4 h-4" />
+                  <User className="w-6 h-6" />
                   Profile
                 </Link>
                 <button onClick={logout} className="text-sm font-medium hover:text-red-500 flex items-center gap-1">
-                  <LogOut className="w-4 h-4"/>
+                  <LogOut className="w-6 h-6"/>
                   Logout
                 </button>
               </>

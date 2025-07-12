@@ -8,6 +8,7 @@ import blogRoutes from "./routes/blog.route.js";
 import userRoutes from "./routes/user.route.js";
 import commentRoutes from "./routes/comment.route.js";
 import cookieParser from "cookie-parser";
+import aiRoutes from "./routes/apiAi.route.js";
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api/ai", aiRoutes);
 
 
 app.get("/", (req, res) => {

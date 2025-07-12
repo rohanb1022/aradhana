@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import "./App.css";
 import { Route, Routes, Navigate, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
@@ -13,6 +12,7 @@ import ProfilePage from "./page/ProfilePage.tsx";
 import PostDetails from "./page/PostDetails.tsx";
 import EditBlog from "./page/EditBlog.tsx";
 import { Loader } from "lucide-react";
+import  AiSuggestion from "./page/AiSuggestionPage.tsx";
 
 function App() {
   const location = useLocation();
@@ -80,7 +80,9 @@ function App() {
 
         { /* for editing blog */ }
         <Route path="/edit/:blogId" element={authUser ? <EditBlog /> : <Navigate to={"/login"} />} />
-
+        
+        {/* for ai suggestion */}
+        <Route path="/ai/suggestion" element={authUser ? <AiSuggestion/> : <Navigate to={"/login"} />}/>
       </Routes>
     </div>
   );
