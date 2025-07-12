@@ -7,12 +7,11 @@ const generateWebToken = (userId, res) => {
 
   res.cookie("blogging-jwt", token, {
   httpOnly: true,
-  sameSite: "lax",   // or "none" if you're using HTTPS + cross-origin
-  secure: false,     // true if you're on HTTPS
+  sameSite: "none",  // because frontend is on different origin (vercel)
+  secure: true,      // must be true for HTTPS
   path: "/",
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  maxAge: 7 * 24 * 60 * 60 * 1000,
 });
-
 
   return token; 
 };
