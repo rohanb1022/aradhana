@@ -15,14 +15,10 @@ import rateLimit from "express-rate-limit";
 
 const app = express();
 
-const allowedOrigins = [
-  "http://localhost:5173",        // for local dev
-  "https://your-frontend-url.com" // for production (replace with real URL)
-];
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: ["http://localhost:5173", "https://aradhana-six.vercel.app"],
     credentials: true,
   })
 );
