@@ -11,11 +11,9 @@ import cookieParser from "cookie-parser";
 import aiRoutes from "./routes/apiAi.route.js";
 import rateLimit from "express-rate-limit";
 
-
-
 const app = express();
 
-
+app.set('trust proxy', 1);
 app.use(
   cors({
     origin: ["http://localhost:5173", "https://aradhana-six.vercel.app"],
@@ -43,6 +41,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/ai", aiRoutes);
 
+app.use(limiter);
 
 app.get("/", (req, res) => {
   res.send("APP is running...");
