@@ -125,21 +125,6 @@ export const useAuthStore = create<AuthStore>((set) => ({
     }
   },
 
-  // addDetails : async (formData) => {
-  //   set({ isAddingDetails : true})
-  //   try {
-  //     const response = await axiosInstance.post("/user/addDetails" , formData);
-  //     set({ authUser : response.data})
-  //     console.log(response.data)
-  //     toast.success("Details added successfully", toastOptions);
-  //   } catch (error) {
-  //     console.log(error);
-  //     toast.error("Failed to add details", toastOptions);
-  //   } finally{
-  //     set({isAddingDetails : false})
-  //   }
-  // }
-
   addDetails: async (formData) => {
     set({ isAddingDetails: true });
     try {

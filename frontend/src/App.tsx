@@ -60,9 +60,7 @@ function App() {
         {/* for user profile page */}
         <Route
           path="/profile"
-          element={
-            isCheckingAuth ? (
-              <div className="text-white">Loading...</div>
+          element={ isCheckingAuth ? ( <div className="text-white">Loading...</div>
             ) : authUser ? (
               <ProfilePage />
             ) : (
