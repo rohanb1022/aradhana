@@ -10,45 +10,60 @@ import commentRoutes from "./routes/comment.route.js";
 import cookieParser from "cookie-parser";
 import aiRoutes from "./routes/apiAi.route.js";
 import rateLimit from "express-rate-limit";
-
 const app = express();
 
-app.set('trust proxy', 1);
-app.use(
-  cors({
-    origin: ["http://localhost:5173", "https://aradhana-six.vercel.app"],
-    credentials: true,
-  })
-);
+app.set("trust proxy", 1); //  Required for Render
 
-app.use(cookieParser());
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+//  Manual CORS
+const allowedOrigins = ["http://localhost:5173", "https://aradhana-six.vercel.app"];
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  }
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
+
+// Define it early before using it
 const limiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 10, // limit each IP to 10 requests per minute
+  windowMs: 60 * 1000,
+  max: 10,
   message: {
     status: 429,
     error: "Too many requests. Please try again after a minute.",
   },
 });
 
-app.use("/api/ai", limiter); // apply limiter only to AI routes
+// Then later in the code:
+app.use(limiter); // this will now work fine
+
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(cookieParser());
+
+// your routes
 app.use("/api/auth", authRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/ai", aiRoutes);
 
-app.use(limiter);
-
-app.get("/", (req, res) => {
-  res.send("APP is running...");
+// error handler
+app.use((err, req, res, next) => {
+  console.error(" SERVER ERROR:", err.stack || err.message);
+  res.status(500).json({ message: "Internal server error" });
 });
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+  console.log(`Server running on port ${PORT}`);
   connectDB();
 });
