@@ -1,7 +1,5 @@
 {
   "rewrites": [
-    { "source": "/detailedPost/:path*", "destination": "/" },
-    { "source": "/edit/:path*", "destination": "/" },
-    { "source": "/ai/suggestion", "destination": "/" }
+    { "source": "/(.*)", "destination": "/" }
   ]
 }
