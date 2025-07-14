@@ -1,69 +1,82 @@
-# React + TypeScript + Vite
+# 🖼️ Aradhana Blog App - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend for the Aradhana Blog Application, built using **React**, **TypeScript**, **Tailwind CSS**, and **Shadcn/ui**. The UI is designed to be clean, responsive, and user-friendly, supporting blog creation, commenting, likes, and AI-based suggestions.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Tech Stack
 
-## Expanding the ESLint configuration
+- **React + Vite**
+- **TypeScript**
+- **Tailwind CSS**
+- **Shadcn/ui**
+- **Zustand** (state management)
+- **Axios** (API handling)
+- **react-hot-toast** (notifications)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📦 Installation
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd frontend
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## ▶️Running the App
+```bash
+npm run dev
 ```
+
+## 📚 Features Overview
+
+🔐 Authentication
+- User Registration & Login
+- JWT stored in HTTP-only cookies
+- Auto-authentication on page reloads
+
+📝 Blog Management
+- Create a blog (with optional image)
+- View all blogs
+- View single blog in detail
+- Edit & delete own blog
+
+💬 Comments
+- Add comments on any blog
+
+❤️ Likes
+- Like/unlike blogs
+- Like count updates in real-time
+
+🤖 AI Suggestions (Groq API)
+- Enter a short prompt (max 150 characters)
+- Generate blog title and bullet points using AI
+- Copy the recommendation
+
+📦 Zustand State Management
+- Auth state (handled in `authStore`)
+- Blog state (handled in `blogStore`)
+  - Includes create, delete, comment, and like actions
+
+
+🌐 API Integration
+- Axios with `withCredentials: true`
+- Centralized API config via `lib/axios.ts`
+
+---
+
+## 🔗 API Base URL
+
+```
+import axios from "axios";
+
+const API = axios.create({
+  baseURL: "http://localhost:5000",
+  withCredentials: true
+});
+
+export default API;
+```
+
+
+

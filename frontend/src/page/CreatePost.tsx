@@ -61,7 +61,7 @@ const CreatePost = () => {
         .split(",")
         .map((t) => t.trim())
         .filter((t) => t)
-        .join(",")
+        .join(", ")
     );
     if (imageFile) {
       formData.append("image", imageFile);

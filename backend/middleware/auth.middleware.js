@@ -23,7 +23,6 @@ import User from "../models/user.model.js";
 
 export const verifyToken = async (req, res, next) => {
   const token = req.cookies["blogging-jwt"];
-  console.log(" Incoming token:", token);
 
   if (!token) {
     console.log(" No token received");
@@ -32,7 +31,6 @@ export const verifyToken = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded token:", decoded);
 
     const user = await User.findById(decoded.userId).select("-password");
 
