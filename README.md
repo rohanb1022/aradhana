@@ -81,3 +81,17 @@ cd frontend
 npm install
 npm run dev
 ```
+
+## 🚀 Improvements I'd Like to Add
+
+- Public blog explore page
+- Rich text editor for blog creation
+- User profile page with editable info
+- Blog filters by tag/category
+- Pagination for blog list
+
+## 👨‍💻 Developed By
+
+- Rohan Vinayak Bhangale
+- Contact me - rohanbhangale25@gmail.com
+- B.Tech Student, VESIT Mumbai
