@@ -93,15 +93,12 @@ export const signin = async (req , res) => {
 
 export async function logout(req, res) {
   try {
-    res.cookie("blogging-jwt", "", {
-  httpOnly: true,
-  sameSite: "lax",
-  secure: false, // must match above
-  path: "/",
-  maxAge: 0,
-});
-
-    res.status(200).json({ message: "You are successfully logged out" });
+    res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+  });
+  return res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.log("Logout error:", error.message);
     res.status(500).json({ message: "Internal server error" });

@@ -5,7 +5,7 @@ const generateWebToken = (userId, res) => {
     expiresIn: "7d",
   });
 
-  res.cookie("blogging-jwt", token, {
+  res.cookie("token", token, {
   httpOnly: true,
   sameSite: "none",  // because frontend is on different origin (vercel)
   secure: true,      // must be true for HTTPS

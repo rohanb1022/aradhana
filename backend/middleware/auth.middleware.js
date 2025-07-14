@@ -22,7 +22,7 @@ import User from "../models/user.model.js";
 // };
 
 export const verifyToken = async (req, res, next) => {
-  const token = req.cookies["blogging-jwt"];
+  const token = req.cookies.token;
 
   if (!token) {
     console.log(" No token received");
