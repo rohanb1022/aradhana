@@ -14,12 +14,11 @@ const app = express();
 
 app.set("trust proxy", 1); //  Required for Render
 
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: "https://aradhana-nnts.vercel.app",
+  credentials: true,
+}));
+
 
 // Define it early before using it
 const limiter = rateLimit({
