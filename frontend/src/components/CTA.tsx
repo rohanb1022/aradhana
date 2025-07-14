@@ -9,7 +9,7 @@ const CTA = () => {
       {!authUser && (
         <section className="mt-20 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
           <div>
-            <h2 className="text-3xl font-semibold mb-4">Why Join ArtistBlog?</h2>
+            <h2 className="text-3xl font-semibold mb-4">Why Join Aradhana?</h2>
             <ul className="space-y-3 text-muted-foreground text-base">
               <li>✅ Create and share your blog posts with the world.</li>
               <li>💬 Comment and connect with fellow artists.</li>
