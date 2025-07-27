@@ -15,7 +15,7 @@ const app = express();
 app.set("trust proxy", 1); //  Required for Render
 
 app.use(cors({
-  origin: "https://aradhana-nnts.vercel.app",
+  origin: process.env.CLIENT_URL,
   credentials: true,
 }));
 
