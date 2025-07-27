@@ -8,8 +8,8 @@ import authRoutes from "./routes/auth.route.js";
 import blogRoutes from "./routes/blog.route.js";
 import userRoutes from "./routes/user.route.js";
 import commentRoutes from "./routes/comment.route.js";
-import cookieParser from "cookie-parser";
 import aiRoutes from "./routes/apiAi.route.js";
+import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -42,11 +42,11 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 
 // Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/blogs", blogRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/comments", commentRoutes);
-app.use("/api/ai", aiRoutes);
+ app.use("/api/auth", authRoutes);
+ app.use("/api/blogs", blogRoutes);
+ app.use("/api/user", userRoutes);
+ app.use("/api/comments", commentRoutes);
+ app.use("/api/ai", aiRoutes);
 
 
 //  Serve React Frontend
@@ -54,12 +54,14 @@ app.use("/api/ai", aiRoutes);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve static files from frontend build
-app.use(express.static(path.join(__dirname, "client/dist")));
+ //Serve static files from frontend build
+app.use(express.static(path.resolve(__dirname, "client", "dist")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client/dist/index.html"));
+// Avoid matching /api or any backend paths
+app.get(/^\/(?!api).*/, (req, res) => {
+  res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"));
 });
+
 
 // Error Handler
 
