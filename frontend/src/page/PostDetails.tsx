@@ -6,14 +6,21 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useBlogStore } from "@/store/useBlogStore";
 import { motion } from "framer-motion";
-import { CalendarDays, User, Heart, MessageCircleMore , Loader} from "lucide-react";
+import {
+  CalendarDays,
+  User,
+  Heart,
+  MessageCircleMore,
+  Loader,
+} from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import AddComment from "@/components/AddComment";
 import CommentSection from "@/components/CommentSection";
 import { toast } from "react-hot-toast";
+import { Button } from "@/components/ui/button";
 
 const PostDetails = () => {
-  const { getSinglePost, post, makeLike , removePost} = useBlogStore();
+  const { getSinglePost, post, makeLike, removePost } = useBlogStore();
   const { authUser } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
@@ -46,8 +53,16 @@ const PostDetails = () => {
     setOpenCommentSection((prev) => !prev);
   };
 
+  const handleSpeak = (text: string) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-US";
+    speechSynthesis.speak(utterance);
+  };
+
   const handleDelete = async () => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this blog?");
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this blog?"
+    );
     if (!confirmDelete) return;
 
     try {
@@ -154,6 +169,14 @@ const PostDetails = () => {
             <MessageCircleMore className="fill-white w-7 h-7" />
             <span className="text-white text-md">{post.comments.length}</span>
           </div>
+
+          <div>
+            <Button onClick={() => handleSpeak(post.title + post.content)}>
+              🔊 Listen to this blog
+            </Button>
+          </div>
+
+          <div></div>
 
           {/* Edit & Delete for Owner */}
           {authUser._id === post.owner?._id && (
