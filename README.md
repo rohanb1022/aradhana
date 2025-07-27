@@ -21,8 +21,7 @@ Get instant Help from the AI
 
 ## 🔗 Live Links
 
-- 🖼️ Frontend: [https://aradhana-nnts.vercel.app](https://aradhana-nnts.vercel.app)
-- 🔧 Backend: [https://aradhana-1.onrender.com](https://aradhana-1.onrender.com)
+-  live link : [https://aradhana-blog-perp.onrender.com](https://aradhana-blog-perp.onrender.com)
 - 📂 GitHub Repo: [https://github.com/rohanb1022/aradhana](https://github.com/rohanb1022/aradhana)
 
 ---
