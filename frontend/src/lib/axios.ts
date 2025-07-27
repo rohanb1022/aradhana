@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: process.env.VITE_BACKEND_URL,
+  baseURL: "/api",
   withCredentials: true,
 });
  // Include credentials (cookies) in requests
